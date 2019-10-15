@@ -1,4 +1,4 @@
-package com.github.skyline.utils.common;
+package com.github.skyline.utils;
 
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
