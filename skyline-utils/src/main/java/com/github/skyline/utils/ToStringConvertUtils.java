@@ -33,25 +33,30 @@ public class ToStringConvertUtils {
         }
 
         T result = clazz.newInstance();
-        toString = toString.substring(toString.indexOf("(") + 1, toString.lastIndexOf(")"));
-        while (StringUtils.isNotEmpty(toString)) {
-            String token = splitToken(toString);
-            if (StringUtils.isBlank(token)) {
-                break;
-            }
-            toString = StringUtils.removeStart(StringUtils.removeStart(toString, token).trim(), ",").trim();
+        try {
+            toString = toString.substring(toString.indexOf("(") + 1, toString.lastIndexOf(")"));
+            while (StringUtils.isNotEmpty(toString)) {
+                String token = splitToken(toString);
+                if (StringUtils.isBlank(token)) {
+                    break;
+                }
+                toString = StringUtils.removeStart(StringUtils.removeStart(toString, token).trim(), ",").trim();
 
-            // 解析token并设置值
-            assert token.contains("=");
-            String fieldName = StringUtils.substringBefore(token, "=").trim();
-            String fieldValue = StringUtils.substringAfter(token, "=").trim();
-            if (StringUtils.isBlank(fieldValue) || StringUtils.equalsIgnoreCase(fieldValue, "null")) {
-                continue;
-            }
+                // 解析token并设置值
+                assert token.contains("=");
+                String fieldName = StringUtils.substringBefore(token, "=").trim();
+                String fieldValue = StringUtils.substringAfter(token, "=").trim();
+                if (StringUtils.isBlank(fieldValue) || StringUtils.equalsIgnoreCase(fieldValue, "null")) {
+                    continue;
+                }
 
-            Field field = ReflectionUtils.getField(result, fieldName);
-            assert field != null;
-            ReflectionUtils.setField(result, fieldName, fieldValue2Object(field, fieldValue));
+                Field field = ReflectionUtils.getField(result, fieldName);
+                assert field != null;
+                ReflectionUtils.setField(result, fieldName, fieldValue2Object(field, fieldValue));
+            }
+        } catch (Exception e) {
+            System.err.println(String.format("clazz=%s toString=%s", clazz, toString));
+            throw e;
         }
         return result;
     }
@@ -64,6 +69,8 @@ public class ToStringConvertUtils {
             return listTypeValue(field, fieldValue);
         } else if (field.getType().isAssignableFrom(Map.class)) {
             return mapTypeValue(field, fieldValue);
+        } else if (field.getType().isAssignableFrom(Date.class)) {
+            return new Date(fieldValue);
         } else {
             return toString2Object(field.getType(), fieldValue);
         }
