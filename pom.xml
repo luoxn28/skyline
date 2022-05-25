@@ -13,7 +13,7 @@
     </modules>
 
     <properties>
-        <spring.version>5.1.2.RELEASE</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
         <lombok.version>1.18.10</lombok.version>
         <commons-lang.version>3.9</commons-lang.version>
         <commons-net.version>3.6</commons-net.version>
